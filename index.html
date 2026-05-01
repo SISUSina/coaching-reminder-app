@@ -2,196 +2,665 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Deine Coaching App</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coaching App — MAX</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#f2ede8;--bg2:#e8e2db;--card:#fffefb;--accent:#9b8678;--accent2:#c4a882;--text:#3a3028;--text2:#7a6a5a;--text3:#a89888;--check:#b5897a;--pill-bg:rgba(255,255,255,0.72);--pill-border:rgba(155,134,120,0.25);--radius:18px;--font-serif:'Cormorant Garamond',Georgia,serif;--font-sans:'Jost',system-ui,sans-serif}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;background:var(--bg);font-family:var(--font-sans);color:var(--text);overflow:hidden}
-#app{position:relative;width:100%;max-width:430px;height:100dvh;margin:0 auto;overflow:hidden;background:var(--bg)}
-.screen{position:absolute;inset:0;display:flex;flex-direction:column;opacity:0;pointer-events:none;transform:translateX(30px);transition:opacity .35s ease,transform .35s ease;overflow:hidden}
-.screen.active{opacity:1;pointer-events:all;transform:translateX(0)}
-.screen.exit-left{opacity:0;transform:translateX(-30px)}
-.topbar{display:flex;align-items:center;justify-content:space-between;padding:52px 24px 16px;flex-shrink:0}
-.topbar-label{font-family:var(--font-sans);font-size:10px;font-weight:500;letter-spacing:.18em;color:var(--text3);text-transform:uppercase}
-.back-btn{display:flex;align-items:center;gap:6px;background:none;border:none;cursor:pointer;font-family:var(--font-sans);font-size:12px;font-weight:400;letter-spacing:.12em;color:var(--text3);text-transform:uppercase;padding:4px 0;transition:color .2s}
-.back-btn:hover{color:var(--accent)}
-.back-btn svg{width:14px;height:14px}
-#screen-home{background:linear-gradient(160deg,#e8dfd5 0%,#d9cfc6 100%)}
-.home-bg{position:absolute;inset:0;overflow:hidden}
-.blob{position:absolute;border-radius:50%;filter:blur(60px);opacity:.5}
-.blob1{width:280px;height:280px;background:#c9b8a8;top:-60px;right:-80px}
-.blob2{width:200px;height:200px;background:#d4bfac;bottom:80px;left:-60px}
-.home-content{position:relative;z-index:1;display:flex;flex-direction:column;height:100%;padding:0 28px 48px}
-.home-top{padding-top:54px;flex:1;display:flex;flex-direction:column;justify-content:flex-start}
-.home-subtitle{font-family:var(--font-sans);font-size:10px;font-weight:500;letter-spacing:.22em;color:rgba(58,48,40,.55);text-transform:uppercase;margin-bottom:10px}
-.home-greeting{font-family:var(--font-serif);font-size:clamp(52px,18vw,76px);font-weight:300;line-height:.92;color:var(--text);letter-spacing:-.01em}
-.home-greeting em{font-style:italic;color:var(--accent)}
-.home-name-display{font-family:var(--font-serif);font-size:clamp(52px,18vw,76px);font-weight:400;line-height:.92;color:var(--text);display:block}
-.home-divider{width:48px;height:1px;background:var(--accent);opacity:.4;margin:28px 0 20px}
-.home-desc{font-size:13px;font-weight:300;color:var(--text2);line-height:1.7;letter-spacing:.02em;max-width:240px}
-.home-nav{display:flex;flex-direction:column;gap:12px;padding-bottom:8px}
-.nav-pill{display:flex;align-items:center;justify-content:space-between;background:var(--pill-bg);border:1px solid var(--pill-border);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-radius:50px;padding:18px 24px;cursor:pointer;transition:background .25s,transform .2s,box-shadow .25s}
-.nav-pill:hover{background:rgba(255,255,255,.88);transform:translateY(-2px);box-shadow:0 8px 24px rgba(155,134,120,.18)}
-.nav-pill:active{transform:translateY(0) scale(.98)}
-.nav-pill-left{display:flex;align-items:center;gap:14px}
-.nav-pill-icon{width:34px;height:34px;border-radius:50%;background:rgba(155,134,120,.12);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.nav-pill-icon svg{width:16px;height:16px;stroke:var(--accent);fill:none;stroke-width:1.5}
-.nav-pill-text{font-family:var(--font-sans);font-size:15px;font-weight:400;color:var(--text);letter-spacing:.02em}
-.nav-pill-arrow{width:28px;height:28px;border-radius:50%;background:rgba(155,134,120,.1);display:flex;align-items:center;justify-content:center}
-.nav-pill-arrow svg{width:12px;height:12px;stroke:var(--accent);fill:none;stroke-width:2}
-.home-footer{text-align:center;padding-top:20px}
-.home-footer-text{font-size:10px;letter-spacing:.18em;color:var(--text3);text-transform:uppercase}
-#screen-tagesplan{background:var(--bg)}
-.tagesplan-body{flex:1;overflow-y:auto;padding:0 24px 32px}
-.day-card{background:var(--card);border-radius:var(--radius);border:1px solid rgba(155,134,120,.12);overflow:hidden;box-shadow:0 4px 24px rgba(155,134,120,.1)}
-.day-header{background:var(--accent);padding:20px 20px 18px;display:flex;align-items:center;justify-content:space-between}
-.day-nav-btn{background:rgba(255,255,255,.2);border:none;width:34px;height:34px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s}
-.day-nav-btn:hover{background:rgba(255,255,255,.35)}
-.day-nav-btn svg{width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2}
-.day-name{font-family:var(--font-serif);font-size:30px;font-weight:400;color:#fff;letter-spacing:.04em;text-align:center;flex:1}
-.day-tasks{padding:20px;display:flex;flex-direction:column;gap:12px}
-.task-row{display:flex;align-items:center;gap:14px}
-.task-check{width:30px;height:30px;border-radius:50%;border:2px solid rgba(155,134,120,.3);background:#fff;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:border-color .2s,background .2s}
-.task-check.checked{border-color:var(--check);background:var(--check)}
-.task-check svg{width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2.5;opacity:0;transition:opacity .2s}
-.task-check.checked svg{opacity:1}
-.task-label{flex:1;background:rgba(242,237,232,.6);border-radius:50px;padding:12px 18px;font-size:14px;font-weight:400;color:var(--text);letter-spacing:.02em;transition:opacity .2s}
-.task-label.done{opacity:.4;text-decoration:line-through}
-.day-empty{padding:32px 20px;text-align:center;font-size:13px;color:var(--text3);font-style:italic}
-.progress-bar-wrap{height:3px;background:rgba(155,134,120,.15)}
-.progress-bar-fill{height:100%;background:var(--check);transition:width .4s ease}
-.day-dots{display:flex;justify-content:center;gap:6px;margin-top:20px}
-.day-dot{width:6px;height:6px;border-radius:50%;background:rgba(155,134,120,.2);transition:background .25s,transform .25s}
-.day-dot.active{background:var(--accent);transform:scale(1.3)}
-#screen-uebung{background:linear-gradient(170deg,#dce5f0 0%,#c8d8e8 40%,#e0cdd8 100%)}
-.uebung-body{flex:1;display:flex;flex-direction:column;overflow:hidden}
-.breath-slides{flex:1;position:relative;overflow:hidden}
-.breath-slide{position:absolute;inset:0;display:flex;flex-direction:column;padding:12px 28px 20px;opacity:0;transform:translateX(40px);transition:opacity .4s ease,transform .4s ease;overflow-y:auto}
-.breath-slide.active{opacity:1;transform:translateX(0)}
-.breath-slide.exit{opacity:0;transform:translateX(-40px)}
-.breath-title-num{font-family:var(--font-serif);font-size:clamp(52px,22vw,88px);font-weight:300;color:rgba(50,65,90,.18);line-height:1;letter-spacing:-.02em;margin-bottom:2px}
-.breath-title-tag{display:inline-block;font-family:var(--font-sans);font-size:10px;letter-spacing:.2em;color:rgba(50,65,90,.5);text-transform:uppercase;margin-bottom:20px}
-.breath-instruction{font-family:var(--font-serif);font-size:clamp(20px,6vw,26px);font-weight:400;color:#323a52;line-height:1.45;margin-bottom:20px}
-.breath-body-text{font-size:13.5px;font-weight:300;color:rgba(50,58,82,.7);line-height:1.75;margin-bottom:14px}
-.breath-section-label{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:rgba(50,58,82,.45);margin-bottom:8px;margin-top:16px}
-.breath-list{list-style:none;display:flex;flex-direction:column;gap:6px}
-.breath-list li{display:flex;align-items:center;gap:10px;font-size:13.5px;color:rgba(50,58,82,.75);font-weight:300}
-.breath-list li::before{content:'';width:5px;height:5px;border-radius:50%;background:rgba(90,74,106,.5);flex-shrink:0}
-.breath-circle-wrap{display:flex;justify-content:center;margin:16px 0 8px}
-.breath-circle{width:90px;height:90px;border-radius:50%;background:rgba(100,120,170,.12);border:1.5px solid rgba(100,120,170,.25);display:flex;align-items:center;justify-content:center;font-size:11px;color:rgba(50,58,82,.5);letter-spacing:.1em;animation:breathe 8s ease-in-out infinite}
-@keyframes breathe{0%,100%{transform:scale(1);opacity:.7}50%{transform:scale(1.18);opacity:1}}
-.breath-nav{flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:16px 28px 40px}
-.breath-nav-btn{background:rgba(255,255,255,.4);border:1px solid rgba(100,120,170,.2);backdrop-filter:blur(8px);border-radius:50px;padding:10px 22px;font-family:var(--font-sans);font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#323a52;cursor:pointer;transition:background .2s,transform .15s}
-.breath-nav-btn:hover{background:rgba(255,255,255,.6)}
-.breath-nav-btn:active{transform:scale(.97)}
-.breath-nav-btn:disabled{opacity:.2;cursor:default}
-.breath-counter{font-size:11px;letter-spacing:.14em;color:rgba(50,58,82,.45)}
-#screen-backup{background:linear-gradient(150deg,#ede5d8 0%,#dfd3c4 100%)}
-.backup-body{flex:1;overflow-y:auto;padding:8px 24px 48px;display:flex;flex-direction:column;gap:14px}
-.backup-hero{text-align:center;padding:8px 0 16px}
-.backup-num{font-family:var(--font-serif);font-size:80px;font-weight:300;color:rgba(100,75,55,.12);line-height:1;letter-spacing:-.02em}
-.backup-title{font-family:var(--font-serif);font-size:22px;font-weight:400;color:var(--text);margin-top:-16px;margin-bottom:6px}
-.backup-subtitle{font-size:12px;color:var(--text3);letter-spacing:.04em}
-.backup-steps{display:flex;flex-direction:column;gap:10px}
-.backup-step{background:rgba(255,255,255,.55);border:1px solid rgba(155,134,120,.15);backdrop-filter:blur(8px);border-radius:var(--radius);padding:16px 18px;display:flex;align-items:flex-start;gap:14px}
-.backup-step-num{font-family:var(--font-serif);font-size:28px;font-weight:300;color:var(--accent2);line-height:1;flex-shrink:0;min-width:24px}
-.backup-step-title{font-size:14px;font-weight:500;color:var(--text);margin-bottom:3px;letter-spacing:.02em}
-.backup-step-desc{font-size:12.5px;color:var(--text2);line-height:1.6;font-weight:300}
-.backup-note{background:rgba(155,134,120,.08);border-radius:12px;padding:14px 16px;font-size:12.5px;color:var(--text2);font-style:italic;line-height:1.65;text-align:center}
-::-webkit-scrollbar{width:3px}
-::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:rgba(155,134,120,.25);border-radius:3px}
+  :root {
+    --bg: #f2ede8;
+    --bg2: #e8e2db;
+    --card: #fffefb;
+    --accent: #9b8678;
+    --accent2: #c4a882;
+    --text: #3a3028;
+    --text2: #7a6a5a;
+    --text3: #a89888;
+    --check: #b5897a;
+    --pill-bg: rgba(255,255,255,0.72);
+    --pill-border: rgba(155,134,120,0.25);
+    --radius: 18px;
+    --font-serif: 'Cormorant Garamond', Georgia, serif;
+    --font-sans: 'Jost', system-ui, sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--bg);
+    font-family: var(--font-sans);
+    color: var(--text);
+    min-height: 100vh;
+  }
+  body {
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  #app {
+    position: relative;
+    width: 100%;
+    max-width: 430px;
+    min-height: 100vh;
+    margin: 0 auto;
+    background: var(--bg);
+  }
+
+  .screen {
+    display: none;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  @supports (min-height: 100dvh) {
+    #app, .screen { min-height: 100dvh; }
+  }
+  .screen.active {
+    display: flex;
+  }
+
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 52px 24px 16px;
+    flex-shrink: 0;
+  }
+  .topbar-label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    color: var(--text3);
+    text-transform: uppercase;
+  }
+  .back-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: 0.12em;
+    color: var(--text3);
+    text-transform: uppercase;
+    padding: 4px 0;
+    transition: color 0.2s;
+  }
+  .back-btn:hover { color: var(--accent); }
+  .back-btn svg { width:14px; height:14px; stroke: currentColor; fill: none; stroke-width: 2; }
+
+  #screen-home {
+    background: linear-gradient(160deg, #e8dfd5 0%, #d9cfc6 100%);
+    position: relative;
+  }
+  .blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(60px);
+    opacity: 0.5;
+    pointer-events: none;
+  }
+  .blob1 { width:280px; height:280px; background:#c9b8a8; top:-60px; right:-80px; }
+  .blob2 { width:200px; height:200px; background:#d4bfac; bottom:80px; left:-60px; }
+
+  .home-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 0 28px 48px;
+  }
+  .home-top {
+    padding-top: 54px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+  .home-subtitle {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    color: rgba(58,48,40,0.55);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .home-greeting {
+    font-family: var(--font-serif);
+    font-size: clamp(52px, 18vw, 76px);
+    font-weight: 300;
+    line-height: 0.92;
+    color: var(--text);
+    letter-spacing: -0.01em;
+  }
+  .home-greeting em {
+    font-style: italic;
+    color: var(--accent);
+    font-weight: 400;
+  }
+  .home-divider {
+    width: 48px;
+    height: 1px;
+    background: var(--accent);
+    opacity: 0.4;
+    margin: 28px 0 20px;
+  }
+  .home-desc {
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--text2);
+    line-height: 1.7;
+    letter-spacing: 0.02em;
+    max-width: 240px;
+  }
+
+  .home-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-bottom: 8px;
+  }
+  .nav-pill {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--pill-bg);
+    border: 1px solid var(--pill-border);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 50px;
+    padding: 18px 24px;
+    cursor: pointer;
+    transition: background 0.25s, transform 0.2s, box-shadow 0.25s;
+    width: 100%;
+    text-align: left;
+    font-family: var(--font-sans);
+  }
+  .nav-pill:hover {
+    background: rgba(255,255,255,0.88);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(155,134,120,0.18);
+  }
+  .nav-pill:active { transform: translateY(0) scale(0.98); }
+  .nav-pill-left { display: flex; align-items: center; gap: 14px; }
+  .nav-pill-icon {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    background: rgba(155,134,120,0.12);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .nav-pill-icon svg { width:16px; height:16px; stroke: var(--accent); fill: none; stroke-width: 1.5; }
+  .nav-pill-text { font-size: 15px; font-weight: 400; color: var(--text); letter-spacing: 0.02em; }
+  .nav-pill-arrow {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: rgba(155,134,120,0.1);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .nav-pill-arrow svg { width: 12px; height: 12px; stroke: var(--accent); fill: none; stroke-width: 2; }
+
+  .home-footer { text-align: center; padding-top: 20px; }
+  .home-footer-text { font-size: 10px; letter-spacing: 0.18em; color: var(--text3); text-transform: uppercase; }
+
+  #screen-tagesplan { background: var(--bg); }
+  .tagesplan-body { flex: 1; padding: 0 24px 32px; }
+
+  .week-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 0 14px;
+    gap: 8px;
+  }
+  .week-nav-btn {
+    background: rgba(255,255,255,0.6);
+    border: 1px solid rgba(155,134,120,0.2);
+    border-radius: 50px;
+    cursor: pointer;
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.06em;
+    color: var(--text2);
+    padding: 8px 14px;
+    transition: background 0.2s, color 0.2s;
+    white-space: nowrap;
+  }
+  .week-nav-btn:hover { background: rgba(255,255,255,0.9); color: var(--accent); }
+  .week-nav-btn:active { transform: scale(0.97); }
+  .week-label {
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    color: var(--text2);
+    text-transform: uppercase;
+    text-align: center;
+    flex: 1;
+  }
+
+  .day-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    border: 1px solid rgba(155,134,120,0.12);
+    overflow: hidden;
+    box-shadow: 0 4px 24px rgba(155,134,120,0.1);
+  }
+  .day-header {
+    background: var(--accent);
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .day-header-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    gap: 4px;
+    min-width: 0;
+  }
+  .day-nav-btn {
+    background: rgba(255,255,255,0.2);
+    border: none;
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s;
+    flex-shrink: 0;
+  }
+  .day-nav-btn:hover { background: rgba(255,255,255,0.35); }
+  .day-nav-btn svg { width: 14px; height: 14px; stroke: #fff; fill: none; stroke-width: 2; }
+  .day-name {
+    font-family: var(--font-serif);
+    font-size: 30px;
+    font-weight: 400;
+    color: #fff;
+    letter-spacing: 0.04em;
+    text-align: center;
+  }
+  .day-date {
+    font-size: 11px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.7);
+    letter-spacing: 0.06em;
+  }
+
+  .progress-bar { height: 3px; background: rgba(155,134,120,0.15); }
+  .progress-bar-fill { height: 100%; background: var(--check); transition: width 0.4s ease; }
+
+  .day-tasks { padding: 20px; display: flex; flex-direction: column; gap: 12px; }
+  .task-row { display: flex; align-items: center; gap: 14px; }
+  .task-check {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    border: 2px solid rgba(155,134,120,0.3);
+    background: #fff;
+    cursor: pointer;
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .task-check.checked { border-color: var(--check); background: var(--check); }
+  .task-check svg { width: 14px; height: 14px; stroke: #fff; fill: none; stroke-width: 2.5; opacity: 0; transition: opacity 0.2s; }
+  .task-check.checked svg { opacity: 1; }
+  .task-label {
+    flex: 1;
+    background: rgba(242,237,232,0.6);
+    border-radius: 50px;
+    padding: 12px 18px;
+    font-size: 14px;
+    color: var(--text);
+    transition: opacity 0.2s;
+  }
+  .task-label.done { opacity: 0.4; text-decoration: line-through; }
+  .day-empty { padding: 32px 20px; text-align: center; font-size: 13px; color: var(--text3); font-style: italic; }
+
+  .day-dots { display: flex; justify-content: center; gap: 6px; margin-top: 20px; }
+  .day-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: rgba(155,134,120,0.2);
+    transition: background 0.25s, transform 0.25s;
+  }
+  .day-dot.active { background: var(--accent); transform: scale(1.3); }
+
+  #screen-uebung {
+    background: linear-gradient(170deg, #dce5f0 0%, #c8d8e8 40%, #e0cdd8 100%);
+  }
+  .uebung-body { flex: 1; display: flex; flex-direction: column; }
+
+  .breath-slide {
+    display: none;
+    flex-direction: column;
+    padding: 12px 28px 16px;
+    flex: 1;
+  }
+  .breath-slide.active { display: flex; }
+
+  .breath-num {
+    font-family: var(--font-serif);
+    font-size: clamp(56px, 17vw, 84px);
+    font-weight: 300;
+    color: rgba(50,65,90,0.18);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    white-space: normal;
+    font-variant-numeric: lining-nums;
+    font-feature-settings: "lnum" 1, "onum" 0;
+  }
+  .breath-tag {
+    display: inline-block;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: rgba(50,65,90,0.5);
+    text-transform: uppercase;
+    margin-top: 14px;
+    margin-bottom: 24px;
+  }
+  .breath-instruction {
+    font-family: var(--font-serif);
+    font-size: clamp(20px, 6vw, 26px);
+    font-weight: 400;
+    color: #323a52;
+    line-height: 1.45;
+  }
+  .breath-circle-wrap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 28px 0;
+  }
+  .breath-canvas { display: block; }
+  .breath-body {
+    font-size: 13.5px;
+    font-weight: 300;
+    color: rgba(50,58,82,0.7);
+    line-height: 1.75;
+    margin-bottom: 14px;
+  }
+  .breath-section-label {
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(50,58,82,0.45);
+    margin-bottom: 8px;
+    margin-top: 16px;
+  }
+  .breath-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+  .breath-list li {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 13.5px; color: rgba(50,58,82,0.75); font-weight: 300;
+  }
+  .breath-list li::before {
+    content: '';
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: rgba(90,74,106,0.5);
+    flex-shrink: 0;
+  }
+
+  .breath-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 28px 40px;
+  }
+  .breath-nav-btn {
+    background: rgba(255,255,255,0.4);
+    border: 1px solid rgba(100,120,170,0.2);
+    backdrop-filter: blur(8px);
+    border-radius: 50px;
+    padding: 10px 22px;
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #323a52;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .breath-nav-btn:hover { background: rgba(255,255,255,0.6); }
+  .breath-nav-btn:active { transform: scale(0.97); }
+  .breath-nav-btn:disabled { opacity: 0.2; cursor: default; }
+  .breath-counter { font-size: 11px; letter-spacing: 0.14em; color: rgba(50,58,82,0.45); }
+
+  #screen-backup { background: linear-gradient(150deg, #ede5d8 0%, #dfd3c4 100%); }
+  .backup-body {
+    flex: 1;
+    padding: 8px 24px 48px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .backup-hero { text-align: center; padding: 8px 0 16px; }
+  .backup-num {
+    font-family: var(--font-serif);
+    font-size: 80px;
+    font-weight: 300;
+    color: rgba(100,75,55,0.12);
+    line-height: 1;
+    margin-bottom: 12px;
+  }
+  .backup-title {
+    font-family: var(--font-serif);
+    font-size: 22px;
+    font-weight: 400;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+  .backup-subtitle { font-size: 12px; color: var(--text3); letter-spacing: 0.04em; }
+  .backup-steps { display: flex; flex-direction: column; gap: 10px; }
+  .backup-step {
+    background: rgba(255,255,255,0.55);
+    border: 1px solid rgba(155,134,120,0.15);
+    backdrop-filter: blur(8px);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+  }
+  .backup-step-num {
+    font-family: var(--font-serif);
+    font-size: 28px;
+    font-weight: 300;
+    color: var(--accent2);
+    line-height: 1;
+    flex-shrink: 0;
+    min-width: 24px;
+  }
+  .backup-step-title { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 3px; }
+  .backup-step-desc { font-size: 12.5px; color: var(--text2); line-height: 1.6; font-weight: 300; }
+  .backup-note {
+    background: rgba(155,134,120,0.08);
+    border-radius: 12px;
+    padding: 14px 16px;
+    font-size: 12.5px;
+    color: var(--text2);
+    font-style: italic;
+    line-height: 1.65;
+    text-align: center;
+  }
 </style>
 </head>
 <body>
 <div id="app">
-<div class="screen active" id="screen-home">
-  <div class="home-bg"><div class="blob blob1"></div><div class="blob blob2"></div></div>
-  <div class="home-content">
-    <div class="home-top">
-      <p class="home-subtitle">Deine Coaching App</p>
-      <div>
-        <div class="home-greeting">Hallo<br><em><span class="home-name-display" id="coachee-name-display"></span></em></div>
+
+  <section class="screen active" id="screen-home">
+    <div class="blob blob1"></div>
+    <div class="blob blob2"></div>
+    <div class="home-content">
+      <div class="home-top">
+        <p class="home-subtitle">Deine Coaching App</p>
+        <div class="home-greeting">Hallo<br><em>MAX</em></div>
+        <div class="home-divider"></div>
+        <p class="home-desc">Dein persönlicher Begleiter für jeden Tag.</p>
       </div>
-      <div class="home-divider"></div>
-      <p class="home-desc">Dein persönlicher Begleiter für jeden Tag.</p>
+
+      <nav class="home-nav">
+        <button type="button" class="nav-pill js-nav" data-target="tagesplan">
+          <span class="nav-pill-left">
+            <span class="nav-pill-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="4" x2="8" y2="9"/><line x1="16" y1="4" x2="16" y2="9"/></svg>
+            </span>
+            <span class="nav-pill-text">Tagesplan</span>
+          </span>
+          <span class="nav-pill-arrow"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></span>
+        </button>
+
+        <button type="button" class="nav-pill js-nav" data-target="uebung">
+          <span class="nav-pill-left">
+            <span class="nav-pill-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="8" opacity="0.5"/><circle cx="12" cy="12" r="2" opacity="0.8"/></svg>
+            </span>
+            <span class="nav-pill-text">Atemübung</span>
+          </span>
+          <span class="nav-pill-arrow"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></span>
+        </button>
+
+        <button type="button" class="nav-pill js-nav" data-target="backup">
+          <span class="nav-pill-left">
+            <span class="nav-pill-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><polygon points="12 2 15 9 22 9 16 14 18 21 12 17 6 21 8 14 2 9 9 9"/></svg>
+            </span>
+            <span class="nav-pill-text">Backup-Plan</span>
+          </span>
+          <span class="nav-pill-arrow"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></span>
+        </button>
+      </nav>
+
+      <div class="home-footer">
+        <p class="home-footer-text">mit ♡ für dich erstellt</p>
+      </div>
     </div>
-    <nav class="home-nav">
-      <button class="nav-pill" onclick="goTo('tagesplan')">
-        <div class="nav-pill-left"><div class="nav-pill-icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="4" x2="8" y2="9"/><line x1="16" y1="4" x2="16" y2="9"/></svg></div><span class="nav-pill-text">Tagesplan</span></div>
-        <div class="nav-pill-arrow"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
+  </section>
+
+  <section class="screen" id="screen-tagesplan">
+    <div class="topbar">
+      <span class="topbar-label">Tagesplan</span>
+      <button type="button" class="back-btn js-nav" data-target="home">
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+        Startseite
       </button>
-      <button class="nav-pill" onclick="goTo('uebung')">
-        <div class="nav-pill-left"><div class="nav-pill-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div><span class="nav-pill-text">Atemübung</span></div>
-        <div class="nav-pill-arrow"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
-      </button>
-      <button class="nav-pill" onclick="goTo('backup')">
-        <div class="nav-pill-left"><div class="nav-pill-icon"><svg viewBox="0 0 24 24"><path d="M12 2L13.5 9h6.5l-5.25 4 2 7L12 16.5 7.25 20l2-7L4 9h6.5z"/></svg></div><span class="nav-pill-text">Backup-Plan</span></div>
-        <div class="nav-pill-arrow"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
-      </button>
-    </nav>
-    <div class="home-footer"><p class="home-footer-text" id="footer-display"></p></div>
-  </div>
-</div>
-<div class="screen" id="screen-tagesplan">
-  <div class="topbar"><span class="topbar-label">Tagesplan</span><button class="back-btn" onclick="goTo('home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>Startseite</button></div>
-  <div class="tagesplan-body">
-    <div class="day-card">
-      <div class="day-header"><button class="day-nav-btn" onclick="changeDay(-1)"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button><div class="day-name" id="day-name-display">MONTAG</div><button class="day-nav-btn" onclick="changeDay(1)"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button></div>
-      <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progress-fill" style="width:0%"></div></div>
-      <div class="day-tasks" id="task-list"></div>
     </div>
-    <div class="day-dots" id="day-dots"></div>
-  </div>
+    <div class="tagesplan-body">
+      <div class="week-nav">
+        <button type="button" class="week-nav-btn" id="week-prev">← Vorwoche</button>
+        <span class="week-label" id="week-label">Diese Woche</span>
+        <button type="button" class="week-nav-btn" id="week-next">Nächste →</button>
+      </div>
+      <div class="day-card">
+        <div class="day-header">
+          <button type="button" class="day-nav-btn" id="day-prev">
+            <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <div class="day-header-center">
+            <div class="day-name" id="day-name">MONTAG</div>
+            <div class="day-date" id="day-date">—</div>
+          </div>
+          <button type="button" class="day-nav-btn" id="day-next">
+            <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+        <div class="progress-bar"><div class="progress-bar-fill" id="progress-fill"></div></div>
+        <div class="day-tasks" id="task-list"></div>
+      </div>
+      <div class="day-dots" id="day-dots"></div>
+    </div>
+  </section>
+
+  <section class="screen" id="screen-uebung">
+    <div class="topbar">
+      <span class="topbar-label">Atemübung</span>
+      <button type="button" class="back-btn js-nav" data-target="home">
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+        Startseite
+      </button>
+    </div>
+    <div class="uebung-body">
+      <div id="breath-slides"></div>
+      <div class="breath-nav">
+        <button type="button" class="breath-nav-btn" id="breath-prev">← Vor</button>
+        <span class="breath-counter" id="breath-counter">1 / 4</span>
+        <button type="button" class="breath-nav-btn" id="breath-next">Nächste →</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="screen" id="screen-backup">
+    <div class="topbar">
+      <span class="topbar-label">Backup-Plan</span>
+      <button type="button" class="back-btn js-nav" data-target="home">
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+        Startseite
+      </button>
+    </div>
+    <div class="backup-body">
+      <div class="backup-hero">
+        <div class="backup-num">5·4·3·2·1</div>
+        <div class="backup-title">Grounding-Technik</div>
+        <div class="backup-subtitle">Aus dem Kopf – in den Körper</div>
+      </div>
+      <div class="backup-steps" id="backup-steps"></div>
+      <div class="backup-note">
+        Das bringt dich raus aus dem Gedankenkarussell.<br>Gerade bei hohem Stress extrem effektiv.
+      </div>
+    </div>
+  </section>
+
 </div>
-<div class="screen" id="screen-uebung">
-  <div class="topbar"><span class="topbar-label">Atemübung</span><button class="back-btn" onclick="goTo('home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>Startseite</button></div>
-  <div class="uebung-body"><div class="breath-slides" id="breath-slides"></div><div class="breath-nav"><button class="breath-nav-btn" id="breath-prev" onclick="changeBreath(-1)">← Vor</button><span class="breath-counter" id="breath-counter">1 / 4</span><button class="breath-nav-btn" id="breath-next" onclick="changeBreath(1)">Nächste →</button></div></div>
-</div>
-<div class="screen" id="screen-backup">
-  <div class="topbar"><span class="topbar-label">Backup-Plan</span><button class="back-btn" onclick="goTo('home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>Startseite</button></div>
-  <div class="backup-body"><div class="backup-hero"><div class="backup-num">5·4·3·2·1</div><div class="backup-title">Grounding-Technik</div><div class="backup-subtitle">Aus dem Kopf – in den Körper</div></div><div class="backup-steps" id="backup-steps"></div><div class="backup-note">Das bringt dich raus aus dem Gedankenkarussell.<br>Gerade bei hohem Stress extrem effektiv.</div></div>
-</div>
-</div>
+
 <script>
-const COACHEE_NAME="MAX";
-const FOOTER_TEXT="mit ♡ für dich erstellt";
-const TAGESPLAN={
+'use strict';
+
+var TAGESPLAN = {
   "Montag": [
     "Sport",
     "Meditation",
     "Aufschreiben"
   ],
   "Dienstag": [
-    "Meditation",
-    "Aufschreiben"
+    "Spaziergang",
+    "Journaling",
+    "Wasser trinken"
   ],
   "Mittwoch": [
-    "Sport",
-    "Meditation",
-    "Aufschreiben"
+    "Atemübung",
+    "Lesen",
+    "Früh schlafen"
   ],
   "Donnerstag": [
-    "Meditation",
-    "Aufschreiben"
+    "Sport",
+    "Dankbarkeitsliste",
+    "Handy-freie Stunde"
   ],
   "Freitag": [
-    "Sport",
     "Meditation",
-    "Aufschreiben"
+    "Reflexion der Woche",
+    "Selbstfürsorge"
   ],
   "Samstag": [
-    "Meditation",
-    "Aufschreiben"
+    "Freie Bewegung",
+    "Natur",
+    "Kreativzeit"
   ],
   "Sonntag": [
-    "Meditation",
-    "Aufschreiben"
+    "Ruhe",
+    "Wochenplanung",
+    "Atemübung"
   ]
 };
-const BREATH_SLIDES=[
+var DAYS = Object.keys(TAGESPLAN);
+
+var BREATH_SLIDES = [
   {
     "num": "4-4-4-4",
     "tag": "Ausgleichend",
@@ -199,8 +668,7 @@ const BREATH_SLIDES=[
     "body": "Dann von vorne. Diese Technik bringt dein Nervensystem in die Balance.",
     "optional": "Wenn du magst, atme dabei abwechselnd durch die Nasenlöcher: Rechts ein – halten – links aus. Links ein – halten – rechts aus.",
     "wann": null,
-    "warum": null,
-    "showCircle": true
+    "warum": null
   },
   {
     "num": "4-4-4-4",
@@ -213,8 +681,7 @@ const BREATH_SLIDES=[
       "Konzentrationstief",
       "Vor wichtigen Aufgaben"
     ],
-    "warum": "Diese Variante aktiviert die linke Gehirnhälfte (logisches Denken, Aktivität) und wirkt belebend.",
-    "showCircle": false
+    "warum": "Diese Variante aktiviert die linke Gehirnhälfte (logisches Denken, Aktivität) und wirkt belebend."
   },
   {
     "num": "4-4-4-4",
@@ -227,8 +694,7 @@ const BREATH_SLIDES=[
       "Runterfahren",
       "Vor Meditation oder Schlaf"
     ],
-    "warum": "Diese Variante aktiviert die rechte Gehirnhälfte (Kreativität, Intuition) und wirkt stark beruhigend.",
-    "showCircle": false
+    "warum": "Diese Variante aktiviert die rechte Gehirnhälfte (Kreativität, Intuition) und wirkt stark beruhigend."
   },
   {
     "num": "4-7-8",
@@ -241,11 +707,102 @@ const BREATH_SLIDES=[
       "Bei Unruhe",
       "Zum Einschlafen"
     ],
-    "warum": "Das verlängerte Ausatmen aktiviert den Parasympathikus und wirkt schnell beruhigend.",
-    "showCircle": true
+    "warum": "Das verlängerte Ausatmen aktiviert den Parasympathikus und wirkt schnell beruhigend."
   }
 ];
-const BACKUP_STEPS=[
+
+var BREATH_PHASES = [
+  [
+    {
+      "type": "in",
+      "d": 4,
+      "l": "Einatmen"
+    },
+    {
+      "type": "hold-in",
+      "d": 4,
+      "l": "Halten"
+    },
+    {
+      "type": "out",
+      "d": 4,
+      "l": "Ausatmen"
+    },
+    {
+      "type": "hold-out",
+      "d": 4,
+      "l": "Halten"
+    }
+  ],
+  [
+    {
+      "type": "in",
+      "d": 4,
+      "l": "Einatmen"
+    },
+    {
+      "type": "hold-in",
+      "d": 4,
+      "l": "Halten"
+    },
+    {
+      "type": "out",
+      "d": 4,
+      "l": "Ausatmen"
+    },
+    {
+      "type": "hold-out",
+      "d": 4,
+      "l": "Halten"
+    }
+  ],
+  [
+    {
+      "type": "in",
+      "d": 4,
+      "l": "Einatmen"
+    },
+    {
+      "type": "hold-in",
+      "d": 4,
+      "l": "Halten"
+    },
+    {
+      "type": "out",
+      "d": 4,
+      "l": "Ausatmen"
+    },
+    {
+      "type": "hold-out",
+      "d": 4,
+      "l": "Halten"
+    }
+  ],
+  [
+    {
+      "type": "in",
+      "d": 4,
+      "l": "Einatmen"
+    },
+    {
+      "type": "hold-in",
+      "d": 7,
+      "l": "Halten"
+    },
+    {
+      "type": "out",
+      "d": 8,
+      "l": "Ausatmen"
+    },
+    {
+      "type": "hold-out",
+      "d": 1,
+      "l": ""
+    }
+  ]
+];
+
+var BACKUP_STEPS = [
   {
     "n": "5",
     "title": "5 Dinge sehen",
@@ -272,24 +829,316 @@ const BACKUP_STEPS=[
     "desc": "Was spürst du gerade in deinem Körper? Herzschlag, Atem, Wärme."
   }
 ];
-const DAYS=Object.keys(TAGESPLAN);
-let currentScreen='home',currentDay=0,currentBreath=0;
-const checkState={};
-DAYS.forEach(d=>{checkState[d]={};(TAGESPLAN[d]||[]).forEach((_,i)=>checkState[d][i]=false)});
-document.getElementById('coachee-name-display').textContent=COACHEE_NAME;
-document.getElementById('footer-display').textContent=FOOTER_TEXT;
-function goTo(id){const c=document.getElementById('screen-'+currentScreen),n=document.getElementById('screen-'+id);c.classList.add('exit-left');c.classList.remove('active');setTimeout(()=>c.classList.remove('exit-left'),400);n.classList.add('active');currentScreen=id}
-function renderDay(){const day=DAYS[currentDay];const tasks=TAGESPLAN[day]||[];document.getElementById('day-name-display').textContent=day.toUpperCase();const list=document.getElementById('task-list');list.innerHTML='';if(!tasks.length){list.innerHTML='<div class="day-empty">Kein Plan für diesen Tag 🌿</div>'}else{tasks.forEach((t,i)=>{const done=checkState[day][i];const row=document.createElement('div');row.className='task-row';row.innerHTML=`<div class="task-check${done?' checked':''}" onclick="toggleTask(${i})"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><div class="task-label${done?' done':''}">${t}</div>`;list.appendChild(row)})}const total=tasks.length;const done=Object.values(checkState[day]).filter(Boolean).length;document.getElementById('progress-fill').style.width=(total?Math.round(done/total*100):0)+'%';const dots=document.getElementById('day-dots');dots.innerHTML='';DAYS.forEach((_,i)=>{const d=document.createElement('div');d.className='day-dot'+(i===currentDay?' active':'');dots.appendChild(d)})}
-function toggleTask(i){const day=DAYS[currentDay];checkState[day][i]=!checkState[day][i];renderDay()}
-function changeDay(dir){currentDay=(currentDay+dir+DAYS.length)%DAYS.length;renderDay()}
-function buildBreathSlides(){const c=document.getElementById('breath-slides');c.innerHTML='';BREATH_SLIDES.forEach((s,i)=>{const slide=document.createElement('div');slide.className='breath-slide'+(i===0?' active':'');let html=`<div class="breath-title-num">${s.num}</div><span class="breath-title-tag">${s.tag}</span><div class="breath-instruction">${s.instruction.replace(/\n/g,'<br>')}</div>`;if(s.showCircle)html+=`<div class="breath-circle-wrap"><div class="breath-circle">atmen</div></div>`;html+=`<p class="breath-body-text">${s.body}</p>`;if(s.optional)html+=`<p class="breath-section-label">Optional</p><p class="breath-body-text">${s.optional}</p>`;if(s.wann&&s.wann.length){html+=`<p class="breath-section-label">Wann einsetzen</p><ul class="breath-list">`;s.wann.forEach(w=>html+=`<li>${w}</li>`);html+=`</ul>`}if(s.warum)html+=`<p class="breath-section-label">Warum</p><p class="breath-body-text">${s.warum}</p>`;slide.innerHTML=html;c.appendChild(slide)});updateBreathNav()}
-function changeBreath(dir){const slides=document.querySelectorAll('.breath-slide');slides[currentBreath].classList.remove('active');slides[currentBreath].classList.add('exit');setTimeout(()=>slides[currentBreath].classList.remove('exit'),400);currentBreath=Math.max(0,Math.min(BREATH_SLIDES.length-1,currentBreath+dir));slides[currentBreath].classList.add('active');updateBreathNav()}
-function updateBreathNav(){document.getElementById('breath-prev').disabled=currentBreath===0;document.getElementById('breath-next').disabled=currentBreath===BREATH_SLIDES.length-1;document.getElementById('breath-counter').textContent=`${currentBreath+1} / ${BREATH_SLIDES.length}`}
-function buildBackup(){const c=document.getElementById('backup-steps');BACKUP_STEPS.forEach(s=>{const el=document.createElement('div');el.className='backup-step';el.innerHTML=`<div class="backup-step-num">${s.n}</div><div class="backup-step-content"><div class="backup-step-title">${s.title}</div><div class="backup-step-desc">${s.desc}</div></div>`;c.appendChild(el)})}
-renderDay();buildBreathSlides();buildBackup();
-const todayNames=['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'];
-const todayIdx=DAYS.indexOf(todayNames[new Date().getDay()]);
-if(todayIdx>=0){currentDay=todayIdx;renderDay()}
+
+var state = {
+  screen: 'home',
+  dayIndex: 0,
+  weekOffset: 0,
+  breathIndex: 0,
+  checks: {}
+};
+
+function checkKey() { return state.weekOffset + ':' + DAYS[state.dayIndex]; }
+function getChecks() {
+  var k = checkKey();
+  if (!state.checks[k]) state.checks[k] = {};
+  return state.checks[k];
+}
+
+function showScreen(id) {
+  var screens = document.querySelectorAll('.screen');
+  for (var i = 0; i < screens.length; i++) {
+    screens[i].classList.remove('active');
+  }
+  var target = document.getElementById('screen-' + id);
+  if (target) {
+    target.classList.add('active');
+    state.screen = id;
+    window.scrollTo(0, 0);
+  }
+}
+
+function getDateForDay(dayIndex, weekOffset) {
+  var today = new Date();
+  var dow = today.getDay();
+  var mondayShift = dow === 0 ? -6 : 1 - dow;
+  var d = new Date(today);
+  d.setDate(today.getDate() + mondayShift + (weekOffset * 7) + dayIndex);
+  return d;
+}
+function fmtDate(d) {
+  var months = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+  return d.getDate() + '. ' + months[d.getMonth()] + ' ' + d.getFullYear();
+}
+function weekLabelText() {
+  if (state.weekOffset === 0)  return 'Diese Woche';
+  if (state.weekOffset === -1) return 'Vorwoche';
+  if (state.weekOffset === 1)  return 'Nächste Woche';
+  if (state.weekOffset < 0)    return 'Vor ' + Math.abs(state.weekOffset) + ' Wochen';
+  return 'In ' + state.weekOffset + ' Wochen';
+}
+
+function renderTagesplan() {
+  var day = DAYS[state.dayIndex];
+  var tasks = TAGESPLAN[day];
+  var checks = getChecks();
+
+  document.getElementById('day-name').textContent = day.toUpperCase();
+  document.getElementById('day-date').textContent = fmtDate(getDateForDay(state.dayIndex, state.weekOffset));
+  document.getElementById('week-label').textContent = weekLabelText();
+
+  var list = document.getElementById('task-list');
+  list.innerHTML = '';
+  if (!tasks || tasks.length === 0) {
+    list.innerHTML = '<div class="day-empty">Kein Plan für diesen Tag</div>';
+  } else {
+    for (var i = 0; i < tasks.length; i++) {
+      var done = !!checks[i];
+      var row = document.createElement('div');
+      row.className = 'task-row';
+      var check = document.createElement('div');
+      check.className = 'task-check' + (done ? ' checked' : '');
+      check.setAttribute('data-idx', String(i));
+      check.innerHTML = '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>';
+      var label = document.createElement('div');
+      label.className = 'task-label' + (done ? ' done' : '');
+      label.textContent = tasks[i];
+      row.appendChild(check);
+      row.appendChild(label);
+      list.appendChild(row);
+    }
+  }
+
+  var total = tasks ? tasks.length : 0;
+  var doneCount = 0;
+  for (var k in checks) if (checks[k]) doneCount++;
+  var pct = total ? Math.round(doneCount / total * 100) : 0;
+  document.getElementById('progress-fill').style.width = pct + '%';
+
+  var dots = document.getElementById('day-dots');
+  dots.innerHTML = '';
+  for (var d = 0; d < DAYS.length; d++) {
+    var dot = document.createElement('div');
+    dot.className = 'day-dot' + (d === state.dayIndex ? ' active' : '');
+    dots.appendChild(dot);
+  }
+}
+
+var breathAnimators = {};
+
+function makeBreathAnimator(canvas, phases) {
+  var dpr = window.devicePixelRatio || 1;
+  var size = canvas.width;
+  canvas.width = size * dpr;
+  canvas.height = size * dpr;
+  canvas.style.width = size + 'px';
+  canvas.style.height = size + 'px';
+  var ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+  var W = size, H = size, cx = W/2, cy = H/2;
+  var maxR = W * 0.44, minR = W * 0.14;
+  var rings = 4;
+  var ringColors = ['rgba(242,237,232,0.97)','rgba(214,194,180,0.85)','rgba(185,158,142,0.70)','rgba(162,132,116,0.55)'];
+  var totalCycle = 0;
+  for (var i = 0; i < phases.length; i++) totalCycle += phases[i].d;
+  var startTime = null, rafId = null, running = false;
+
+  function ease(t) { return t < 0.5 ? 2*t*t : -1+(4-2*t)*t; }
+
+  function getScale(elapsed) {
+    var t = elapsed % totalCycle, cum = 0;
+    for (var i = 0; i < phases.length; i++) {
+      var d = phases[i].d;
+      if (t <= cum + d) {
+        var local = (t - cum) / d, type = phases[i].type;
+        if (type === 'in')       return ease(local);
+        if (type === 'hold-in')  return 1;
+        if (type === 'out')      return ease(1 - local);
+        if (type === 'hold-out') return 0;
+      }
+      cum += d;
+    }
+    return 0;
+  }
+  function getLabel(elapsed) {
+    var t = elapsed % totalCycle, cum = 0;
+    for (var i = 0; i < phases.length; i++) {
+      var d = phases[i].d;
+      if (t <= cum + d) return phases[i].l;
+      cum += d;
+    }
+    return '';
+  }
+  function draw(ts) {
+    if (!startTime) startTime = ts;
+    var elapsed = (ts - startTime) / 1000;
+    var scale = getScale(elapsed);
+    var label = getLabel(elapsed);
+    ctx.clearRect(0, 0, W, H);
+    var r = minR + (maxR - minR) * scale;
+    for (var i = rings - 1; i >= 0; i--) {
+      var frac = (i + 1) / rings;
+      ctx.beginPath();
+      ctx.arc(cx, cy, r * frac, 0, Math.PI * 2);
+      ctx.fillStyle = ringColors[i];
+      ctx.fill();
+    }
+    ctx.fillStyle = 'rgba(58,48,40,0.75)';
+    ctx.font = '500 13px "Jost", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(label.toUpperCase(), cx, cy);
+    if (running) rafId = requestAnimationFrame(draw);
+  }
+  return {
+    start: function() {
+      if (running) return;
+      running = true;
+      startTime = null;
+      rafId = requestAnimationFrame(draw);
+    },
+    stop: function() {
+      running = false;
+      if (rafId) cancelAnimationFrame(rafId);
+      ctx.clearRect(0, 0, W, H);
+    }
+  };
+}
+
+function buildBreathSlides() {
+  var container = document.getElementById('breath-slides');
+  container.innerHTML = '';
+  for (var i = 0; i < BREATH_SLIDES.length; i++) {
+    var s = BREATH_SLIDES[i];
+    var slide = document.createElement('div');
+    slide.className = 'breath-slide' + (i === 0 ? ' active' : '');
+    slide.id = 'bslide-' + i;
+
+    var html = '';
+    html += '<div class="breath-num">' + s.num + '</div>';
+    html += '<span class="breath-tag">' + s.tag + '</span>';
+    html += '<div class="breath-instruction">' + s.instruction.replace(/\n/g, '<br>') + '</div>';
+    html += '<div class="breath-circle-wrap"><canvas class="breath-canvas" id="bcanvas-' + i + '" width="240" height="240"></canvas></div>';
+    html += '<p class="breath-body">' + s.body + '</p>';
+    if (s.optional) {
+      html += '<p class="breath-section-label">Optional</p><p class="breath-body">' + s.optional + '</p>';
+    }
+    if (s.wann) {
+      html += '<p class="breath-section-label">Wann einsetzen</p><ul class="breath-list">';
+      for (var w = 0; w < s.wann.length; w++) html += '<li>' + s.wann[w] + '</li>';
+      html += '</ul>';
+    }
+    if (s.warum) {
+      html += '<p class="breath-section-label">Warum</p><p class="breath-body">' + s.warum + '</p>';
+    }
+    slide.innerHTML = html;
+    container.appendChild(slide);
+
+    var canvas = document.getElementById('bcanvas-' + i);
+    breathAnimators[i] = makeBreathAnimator(canvas, BREATH_PHASES[i]);
+  }
+  breathAnimators[0].start();
+  updateBreathNav();
+}
+
+function changeBreath(dir) {
+  var newIdx = state.breathIndex + dir;
+  if (newIdx < 0 || newIdx >= BREATH_SLIDES.length) return;
+  if (breathAnimators[state.breathIndex]) breathAnimators[state.breathIndex].stop();
+  document.getElementById('bslide-' + state.breathIndex).classList.remove('active');
+  state.breathIndex = newIdx;
+  document.getElementById('bslide-' + state.breathIndex).classList.add('active');
+  if (breathAnimators[state.breathIndex]) breathAnimators[state.breathIndex].start();
+  updateBreathNav();
+}
+
+function updateBreathNav() {
+  document.getElementById('breath-prev').disabled = state.breathIndex === 0;
+  document.getElementById('breath-next').disabled = state.breathIndex === BREATH_SLIDES.length - 1;
+  document.getElementById('breath-counter').textContent = (state.breathIndex + 1) + ' / ' + BREATH_SLIDES.length;
+}
+
+function buildBackup() {
+  var container = document.getElementById('backup-steps');
+  container.innerHTML = '';
+  for (var i = 0; i < BACKUP_STEPS.length; i++) {
+    var s = BACKUP_STEPS[i];
+    var el = document.createElement('div');
+    el.className = 'backup-step';
+    el.innerHTML =
+      '<div class="backup-step-num">' + s.n + '</div>' +
+      '<div><div class="backup-step-title">' + s.title + '</div>' +
+      '<div class="backup-step-desc">' + s.desc + '</div></div>';
+    container.appendChild(el);
+  }
+}
+
+function wireEvents() {
+  var navBtns = document.querySelectorAll('.js-nav');
+  for (var i = 0; i < navBtns.length; i++) {
+    (function(btn) {
+      btn.addEventListener('click', function() {
+        var target = btn.getAttribute('data-target');
+        showScreen(target);
+        if (target === 'tagesplan') renderTagesplan();
+      });
+    })(navBtns[i]);
+  }
+
+  document.getElementById('day-prev').addEventListener('click', function() {
+    state.dayIndex = (state.dayIndex - 1 + DAYS.length) % DAYS.length;
+    renderTagesplan();
+  });
+  document.getElementById('day-next').addEventListener('click', function() {
+    state.dayIndex = (state.dayIndex + 1) % DAYS.length;
+    renderTagesplan();
+  });
+
+  document.getElementById('week-prev').addEventListener('click', function() {
+    state.weekOffset--;
+    renderTagesplan();
+  });
+  document.getElementById('week-next').addEventListener('click', function() {
+    state.weekOffset++;
+    renderTagesplan();
+  });
+
+  document.getElementById('task-list').addEventListener('click', function(e) {
+    var check = e.target.closest ? e.target.closest('.task-check') : null;
+    if (!check) {
+      var node = e.target;
+      while (node && node !== this) {
+        if (node.classList && node.classList.contains('task-check')) { check = node; break; }
+        node = node.parentNode;
+      }
+    }
+    if (!check) return;
+    var idx = parseInt(check.getAttribute('data-idx'), 10);
+    var checks = getChecks();
+    checks[idx] = !checks[idx];
+    renderTagesplan();
+  });
+
+  document.getElementById('breath-prev').addEventListener('click', function() { changeBreath(-1); });
+  document.getElementById('breath-next').addEventListener('click', function() { changeBreath(1); });
+}
+
+function init() {
+  var todayNames = ['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'];
+  var idx = DAYS.indexOf(todayNames[new Date().getDay()]);
+  if (idx >= 0) state.dayIndex = idx;
+
+  buildBreathSlides();
+  buildBackup();
+  renderTagesplan();
+  wireEvents();
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
 </script>
 </body>
 </html>
