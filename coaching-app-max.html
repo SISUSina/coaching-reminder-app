@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Deine Coaching App</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f2ede8;--bg2:#e8e2db;--card:#fffefb;--accent:#9b8678;--accent2:#c4a882;--text:#3a3028;--text2:#7a6a5a;--text3:#a89888;--check:#b5897a;--pill-bg:rgba(255,255,255,0.72);--pill-border:rgba(155,134,120,0.25);--radius:18px;--font-serif:'Cormorant Garamond',Georgia,serif;--font-sans:'Jost',system-ui,sans-serif}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--bg);font-family:var(--font-sans);color:var(--text);overflow:hidden}
+#app{position:relative;width:100%;max-width:430px;height:100dvh;margin:0 auto;overflow:hidden;background:var(--bg)}
+.screen{position:absolute;inset:0;display:flex;flex-direction:column;opacity:0;pointer-events:none;transform:translateX(30px);transition:opacity .35s ease,transform .35s ease;overflow:hidden}
+.screen.active{opacity:1;pointer-events:all;transform:translateX(0)}
+.screen.exit-left{opacity:0;transform:translateX(-30px)}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:52px 24px 16px;flex-shrink:0}
+.topbar-label{font-family:var(--font-sans);font-size:10px;font-weight:500;letter-spacing:.18em;color:var(--text3);text-transform:uppercase}
+.back-btn{display:flex;align-items:center;gap:6px;background:none;border:none;cursor:pointer;font-family:var(--font-sans);font-size:12px;font-weight:400;letter-spacing:.12em;color:var(--text3);text-transform:uppercase;padding:4px 0;transition:color .2s}
+.back-btn:hover{color:var(--accent)}
+.back-btn svg{width:14px;height:14px}
+#screen-home{background:linear-gradient(160deg,#e8dfd5 0%,#d9cfc6 100%)}
+.home-bg{position:absolute;inset:0;overflow:hidden}
+.blob{position:absolute;border-radius:50%;filter:blur(60px);opacity:.5}
+.blob1{width:280px;height:280px;background:#c9b8a8;top:-60px;right:-80px}
+.blob2{width:200px;height:200px;background:#d4bfac;bottom:80px;left:-60px}
+.home-content{position:relative;z-index:1;display:flex;flex-direction:column;height:100%;padding:0 28px 48px}
+.home-top{padding-top:54px;flex:1;display:flex;flex-direction:column;justify-content:flex-start}
+.home-subtitle{font-family:var(--font-sans);font-size:10px;font-weight:500;letter-spacing:.22em;color:rgba(58,48,40,.55);text-transform:uppercase;margin-bottom:10px}
+.home-greeting{font-family:var(--font-serif);font-size:clamp(52px,18vw,76px);font-weight:300;line-height:.92;color:var(--text);letter-spacing:-.01em}
+.home-greeting em{font-style:italic;color:var(--accent)}
+.home-name-display{font-family:var(--font-serif);font-size:clamp(52px,18vw,76px);font-weight:400;line-height:.92;color:var(--text);display:block}
+.home-divider{width:48px;height:1px;background:var(--accent);opacity:.4;margin:28px 0 20px}
+.home-desc{font-size:13px;font-weight:300;color:var(--text2);line-height:1.7;letter-spacing:.02em;max-width:240px}
+.home-nav{display:flex;flex-direction:column;gap:12px;padding-bottom:8px}
+.nav-pill{display:flex;align-items:center;justify-content:space-between;background:var(--pill-bg);border:1px solid var(--pill-border);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-radius:50px;padding:18px 24px;cursor:pointer;transition:background .25s,transform .2s,box-shadow .25s}
+.nav-pill:hover{background:rgba(255,255,255,.88);transform:translateY(-2px);box-shadow:0 8px 24px rgba(155,134,120,.18)}
+.nav-pill:active{transform:translateY(0) scale(.98)}
+.nav-pill-left{display:flex;align-items:center;gap:14px}
+.nav-pill-icon{width:34px;height:34px;border-radius:50%;background:rgba(155,134,120,.12);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.nav-pill-icon svg{width:16px;height:16px;stroke:var(--accent);fill:none;stroke-width:1.5}
+.nav-pill-text{font-family:var(--font-sans);font-size:15px;font-weight:400;color:var(--text);letter-spacing:.02em}
+.nav-pill-arrow{width:28px;height:28px;border-radius:50%;background:rgba(155,134,120,.1);display:flex;align-items:center;justify-content:center}
+.nav-pill-arrow svg{width:12px;height:12px;stroke:var(--accent);fill:none;stroke-width:2}
+.home-footer{text-align:center;padding-top:20px}
+.home-footer-text{font-size:10px;letter-spacing:.18em;color:var(--text3);text-transform:uppercase}
+#screen-tagesplan{background:var(--bg)}
+.tagesplan-body{flex:1;overflow-y:auto;padding:0 24px 32px}
+.day-card{background:var(--card);border-radius:var(--radius);border:1px solid rgba(155,134,120,.12);overflow:hidden;box-shadow:0 4px 24px rgba(155,134,120,.1)}
+.day-header{background:var(--accent);padding:20px 20px 18px;display:flex;align-items:center;justify-content:space-between}
+.day-nav-btn{background:rgba(255,255,255,.2);border:none;width:34px;height:34px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s}
+.day-nav-btn:hover{background:rgba(255,255,255,.35)}
+.day-nav-btn svg{width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2}
+.day-name{font-family:var(--font-serif);font-size:30px;font-weight:400;color:#fff;letter-spacing:.04em;text-align:center;flex:1}
+.day-tasks{padding:20px;display:flex;flex-direction:column;gap:12px}
+.task-row{display:flex;align-items:center;gap:14px}
+.task-check{width:30px;height:30px;border-radius:50%;border:2px solid rgba(155,134,120,.3);background:#fff;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:border-color .2s,background .2s}
+.task-check.checked{border-color:var(--check);background:var(--check)}
+.task-check svg{width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2.5;opacity:0;transition:opacity .2s}
+.task-check.checked svg{opacity:1}
+.task-label{flex:1;background:rgba(242,237,232,.6);border-radius:50px;padding:12px 18px;font-size:14px;font-weight:400;color:var(--text);letter-spacing:.02em;transition:opacity .2s}
+.task-label.done{opacity:.4;text-decoration:line-through}
+.day-empty{padding:32px 20px;text-align:center;font-size:13px;color:var(--text3);font-style:italic}
+.progress-bar-wrap{height:3px;background:rgba(155,134,120,.15)}
+.progress-bar-fill{height:100%;background:var(--check);transition:width .4s ease}
+.day-dots{display:flex;justify-content:center;gap:6px;margin-top:20px}
+.day-dot{width:6px;height:6px;border-radius:50%;background:rgba(155,134,120,.2);transition:background .25s,transform .25s}
+.day-dot.active{background:var(--accent);transform:scale(1.3)}
+#screen-uebung{background:linear-gradient(170deg,#dce5f0 0%,#c8d8e8 40%,#e0cdd8 100%)}
+.uebung-body{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.breath-slides{flex:1;position:relative;overflow:hidden}
+.breath-slide{position:absolute;inset:0;display:flex;flex-direction:column;padding:12px 28px 20px;opacity:0;transform:translateX(40px);transition:opacity .4s ease,transform .4s ease;overflow-y:auto}
+.breath-slide.active{opacity:1;transform:translateX(0)}
+.breath-slide.exit{opacity:0;transform:translateX(-40px)}
+.breath-title-num{font-family:var(--font-serif);font-size:clamp(52px,22vw,88px);font-weight:300;color:rgba(50,65,90,.18);line-height:1;letter-spacing:-.02em;margin-bottom:2px}
+.breath-title-tag{display:inline-block;font-family:var(--font-sans);font-size:10px;letter-spacing:.2em;color:rgba(50,65,90,.5);text-transform:uppercase;margin-bottom:20px}
+.breath-instruction{font-family:var(--font-serif);font-size:clamp(20px,6vw,26px);font-weight:400;color:#323a52;line-height:1.45;margin-bottom:20px}
+.breath-body-text{font-size:13.5px;font-weight:300;color:rgba(50,58,82,.7);line-height:1.75;margin-bottom:14px}
+.breath-section-label{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:rgba(50,58,82,.45);margin-bottom:8px;margin-top:16px}
+.breath-list{list-style:none;display:flex;flex-direction:column;gap:6px}
+.breath-list li{display:flex;align-items:center;gap:10px;font-size:13.5px;color:rgba(50,58,82,.75);font-weight:300}
+.breath-list li::before{content:'';width:5px;height:5px;border-radius:50%;background:rgba(90,74,106,.5);flex-shrink:0}
+.breath-circle-wrap{display:flex;justify-content:center;margin:16px 0 8px}
+.breath-circle{width:90px;height:90px;border-radius:50%;background:rgba(100,120,170,.12);border:1.5px solid rgba(100,120,170,.25);display:flex;align-items:center;justify-content:center;font-size:11px;color:rgba(50,58,82,.5);letter-spacing:.1em;animation:breathe 8s ease-in-out infinite}
+@keyframes breathe{0%,100%{transform:scale(1);opacity:.7}50%{transform:scale(1.18);opacity:1}}
+.breath-nav{flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:16px 28px 40px}
+.breath-nav-btn{background:rgba(255,255,255,.4);border:1px solid rgba(100,120,170,.2);backdrop-filter:blur(8px);border-radius:50px;padding:10px 22px;font-family:var(--font-sans);font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#323a52;cursor:pointer;transition:background .2s,transform .15s}
+.breath-nav-btn:hover{background:rgba(255,255,255,.6)}
+.breath-nav-btn:active{transform:scale(.97)}
+.breath-nav-btn:disabled{opacity:.2;cursor:default}
+.breath-counter{font-size:11px;letter-spacing:.14em;color:rgba(50,58,82,.45)}
+#screen-backup{background:linear-gradient(150deg,#ede5d8 0%,#dfd3c4 100%)}
+.backup-body{flex:1;overflow-y:auto;padding:8px 24px 48px;display:flex;flex-direction:column;gap:14px}
+.backup-hero{text-align:center;padding:8px 0 16px}
+.backup-num{font-family:var(--font-serif);font-size:80px;font-weight:300;color:rgba(100,75,55,.12);line-height:1;letter-spacing:-.02em}
+.backup-title{font-family:var(--font-serif);font-size:22px;font-weight:400;color:var(--text);margin-top:-16px;margin-bottom:6px}
+.backup-subtitle{font-size:12px;color:var(--text3);letter-spacing:.04em}
+.backup-steps{display:flex;flex-direction:column;gap:10px}
+.backup-step{background:rgba(255,255,255,.55);border:1px solid rgba(155,134,120,.15);backdrop-filter:blur(8px);border-radius:var(--radius);padding:16px 18px;display:flex;align-items:flex-start;gap:14px}
+.backup-step-num{font-family:var(--font-serif);font-size:28px;font-weight:300;color:var(--accent2);line-height:1;flex-shrink:0;min-width:24px}
+.backup-step-title{font-size:14px;font-weight:500;color:var(--text);margin-bottom:3px;letter-spacing:.02em}
+.backup-step-desc{font-size:12.5px;color:var(--text2);line-height:1.6;font-weight:300}
+.backup-note{background:rgba(155,134,120,.08);border-radius:12px;padding:14px 16px;font-size:12.5px;color:var(--text2);font-style:italic;line-height:1.65;text-align:center}
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(155,134,120,.25);border-radius:3px}
+</style>
+</head>
+<body>
+<div id="app">
+<div class="screen active" id="screen-home">
+  <div class="home-bg"><div class="blob blob1"></div><div class="blob blob2"></div></div>
+  <div class="home-content">
+    <div class="home-top">
+      <p class="home-subtitle">Deine Coaching App</p>
+      <div>
+        <div class="home-greeting">Hallo<br><em><span class="home-name-display" id="coachee-name-display"></span></em></div>
+      </div>
+      <div class="home-divider"></div>
+      <p class="home-desc">Dein persönlicher Begleiter für jeden Tag.</p>
+    </div>
+    <nav class="home-nav">
+      <button class="nav-pill" onclick="goTo('tagesplan')">
+        <div class="nav-pill-left"><div class="nav-pill-icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="4" x2="8" y2="9"/><line x1="16" y1="4" x2="16" y2="9"/></svg></div><span class="nav-pill-text">Tagesplan</span></div>
+        <div class="nav-pill-arrow"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
+      </button>
+      <button class="nav-pill" onclick="goTo('uebung')">
+        <div class="nav-pill-left"><div class="nav-pill-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div><span class="nav-pill-text">Atemübung</span></div>
+        <div class="nav-pill-arrow"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
+      </button>
+      <button class="nav-pill" onclick="goTo('backup')">
+        <div class="nav-pill-left"><div class="nav-pill-icon"><svg viewBox="0 0 24 24"><path d="M12 2L13.5 9h6.5l-5.25 4 2 7L12 16.5 7.25 20l2-7L4 9h6.5z"/></svg></div><span class="nav-pill-text">Backup-Plan</span></div>
+        <div class="nav-pill-arrow"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
+      </button>
+    </nav>
+    <div class="home-footer"><p class="home-footer-text" id="footer-display"></p></div>
+  </div>
+</div>
+<div class="screen" id="screen-tagesplan">
+  <div class="topbar"><span class="topbar-label">Tagesplan</span><button class="back-btn" onclick="goTo('home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>Startseite</button></div>
+  <div class="tagesplan-body">
+    <div class="day-card">
+      <div class="day-header"><button class="day-nav-btn" onclick="changeDay(-1)"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button><div class="day-name" id="day-name-display">MONTAG</div><button class="day-nav-btn" onclick="changeDay(1)"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button></div>
+      <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progress-fill" style="width:0%"></div></div>
+      <div class="day-tasks" id="task-list"></div>
+    </div>
+    <div class="day-dots" id="day-dots"></div>
+  </div>
+</div>
+<div class="screen" id="screen-uebung">
+  <div class="topbar"><span class="topbar-label">Atemübung</span><button class="back-btn" onclick="goTo('home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>Startseite</button></div>
+  <div class="uebung-body"><div class="breath-slides" id="breath-slides"></div><div class="breath-nav"><button class="breath-nav-btn" id="breath-prev" onclick="changeBreath(-1)">← Vor</button><span class="breath-counter" id="breath-counter">1 / 4</span><button class="breath-nav-btn" id="breath-next" onclick="changeBreath(1)">Nächste →</button></div></div>
+</div>
+<div class="screen" id="screen-backup">
+  <div class="topbar"><span class="topbar-label">Backup-Plan</span><button class="back-btn" onclick="goTo('home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>Startseite</button></div>
+  <div class="backup-body"><div class="backup-hero"><div class="backup-num">5·4·3·2·1</div><div class="backup-title">Grounding-Technik</div><div class="backup-subtitle">Aus dem Kopf – in den Körper</div></div><div class="backup-steps" id="backup-steps"></div><div class="backup-note">Das bringt dich raus aus dem Gedankenkarussell.<br>Gerade bei hohem Stress extrem effektiv.</div></div>
+</div>
+</div>
+<script>
+const COACHEE_NAME="MAX";
+const FOOTER_TEXT="mit ♡ für dich erstellt";
+const TAGESPLAN={
+  "Montag": [
+    "Sport",
+    "Meditation",
+    "Aufschreiben"
+  ],
+  "Dienstag": [
+    "Meditation",
+    "Aufschreiben"
+  ],
+  "Mittwoch": [
+    "Sport",
+    "Meditation",
+    "Aufschreiben"
+  ],
+  "Donnerstag": [
+    "Meditation",
+    "Aufschreiben"
+  ],
+  "Freitag": [
+    "Sport",
+    "Meditation",
+    "Aufschreiben"
+  ],
+  "Samstag": [
+    "Meditation",
+    "Aufschreiben"
+  ],
+  "Sonntag": [
+    "Meditation",
+    "Aufschreiben"
+  ]
+};
+const BREATH_SLIDES=[
+  {
+    "num": "4-4-4-4",
+    "tag": "Ausgleichend",
+    "instruction": "Atme 4 Sekunden ein,\nhalte 4 Sekunden,\natme 4 Sekunden aus,\nhalte wieder 4 Sekunden.",
+    "body": "Dann von vorne. Diese Technik bringt dein Nervensystem in die Balance.",
+    "optional": "Wenn du magst, atme dabei abwechselnd durch die Nasenlöcher: Rechts ein – halten – links aus. Links ein – halten – rechts aus.",
+    "wann": null,
+    "warum": null,
+    "showCircle": true
+  },
+  {
+    "num": "4-4-4-4",
+    "tag": "Aktivierend",
+    "instruction": "Atme durch das rechte Nasenloch ein und durch das linke wieder aus.",
+    "body": "Dann von vorne.",
+    "optional": "",
+    "wann": [
+      "Müdigkeit",
+      "Konzentrationstief",
+      "Vor wichtigen Aufgaben"
+    ],
+    "warum": "Diese Variante aktiviert die linke Gehirnhälfte (logisches Denken, Aktivität) und wirkt belebend.",
+    "showCircle": false
+  },
+  {
+    "num": "4-4-4-4",
+    "tag": "Beruhigend",
+    "instruction": "Atme durch das linke Nasenloch ein und durch das rechte wieder aus.",
+    "body": "Dann von vorne.",
+    "optional": "",
+    "wann": [
+      "Entspannung",
+      "Runterfahren",
+      "Vor Meditation oder Schlaf"
+    ],
+    "warum": "Diese Variante aktiviert die rechte Gehirnhälfte (Kreativität, Intuition) und wirkt stark beruhigend.",
+    "showCircle": false
+  },
+  {
+    "num": "4-7-8",
+    "tag": "Beruhigend · Abend",
+    "instruction": "4 Sekunden einatmen,\n7 Sekunden halten,\n8 Sekunden ausatmen.",
+    "body": "Dann von vorne. Das längere Ausatmen beruhigt das Nervensystem direkt.",
+    "optional": "",
+    "wann": [
+      "Abends",
+      "Bei Unruhe",
+      "Zum Einschlafen"
+    ],
+    "warum": "Das verlängerte Ausatmen aktiviert den Parasympathikus und wirkt schnell beruhigend.",
+    "showCircle": true
+  }
+];
+const BACKUP_STEPS=[
+  {
+    "n": "5",
+    "title": "5 Dinge sehen",
+    "desc": "Schau dich um und benenne fünf Dinge, die du gerade siehst."
+  },
+  {
+    "n": "4",
+    "title": "4 Dinge hören",
+    "desc": "Was nimmst du gerade wahr? Stimmen, Geräusche, Stille."
+  },
+  {
+    "n": "3",
+    "title": "3 Dinge fühlen",
+    "desc": "Spüre Oberflächen, Temperatur, die Kleidung auf deiner Haut."
+  },
+  {
+    "n": "2",
+    "title": "2 Dinge riechen",
+    "desc": "Nimm bewusst Gerüche in deiner Umgebung wahr."
+  },
+  {
+    "n": "1",
+    "title": "1 Sache im Körper",
+    "desc": "Was spürst du gerade in deinem Körper? Herzschlag, Atem, Wärme."
+  }
+];
+const DAYS=Object.keys(TAGESPLAN);
+let currentScreen='home',currentDay=0,currentBreath=0;
+const checkState={};
+DAYS.forEach(d=>{checkState[d]={};(TAGESPLAN[d]||[]).forEach((_,i)=>checkState[d][i]=false)});
+document.getElementById('coachee-name-display').textContent=COACHEE_NAME;
+document.getElementById('footer-display').textContent=FOOTER_TEXT;
+function goTo(id){const c=document.getElementById('screen-'+currentScreen),n=document.getElementById('screen-'+id);c.classList.add('exit-left');c.classList.remove('active');setTimeout(()=>c.classList.remove('exit-left'),400);n.classList.add('active');currentScreen=id}
+function renderDay(){const day=DAYS[currentDay];const tasks=TAGESPLAN[day]||[];document.getElementById('day-name-display').textContent=day.toUpperCase();const list=document.getElementById('task-list');list.innerHTML='';if(!tasks.length){list.innerHTML='<div class="day-empty">Kein Plan für diesen Tag 🌿</div>'}else{tasks.forEach((t,i)=>{const done=checkState[day][i];const row=document.createElement('div');row.className='task-row';row.innerHTML=`<div class="task-check${done?' checked':''}" onclick="toggleTask(${i})"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><div class="task-label${done?' done':''}">${t}</div>`;list.appendChild(row)})}const total=tasks.length;const done=Object.values(checkState[day]).filter(Boolean).length;document.getElementById('progress-fill').style.width=(total?Math.round(done/total*100):0)+'%';const dots=document.getElementById('day-dots');dots.innerHTML='';DAYS.forEach((_,i)=>{const d=document.createElement('div');d.className='day-dot'+(i===currentDay?' active':'');dots.appendChild(d)})}
+function toggleTask(i){const day=DAYS[currentDay];checkState[day][i]=!checkState[day][i];renderDay()}
+function changeDay(dir){currentDay=(currentDay+dir+DAYS.length)%DAYS.length;renderDay()}
+function buildBreathSlides(){const c=document.getElementById('breath-slides');c.innerHTML='';BREATH_SLIDES.forEach((s,i)=>{const slide=document.createElement('div');slide.className='breath-slide'+(i===0?' active':'');let html=`<div class="breath-title-num">${s.num}</div><span class="breath-title-tag">${s.tag}</span><div class="breath-instruction">${s.instruction.replace(/\n/g,'<br>')}</div>`;if(s.showCircle)html+=`<div class="breath-circle-wrap"><div class="breath-circle">atmen</div></div>`;html+=`<p class="breath-body-text">${s.body}</p>`;if(s.optional)html+=`<p class="breath-section-label">Optional</p><p class="breath-body-text">${s.optional}</p>`;if(s.wann&&s.wann.length){html+=`<p class="breath-section-label">Wann einsetzen</p><ul class="breath-list">`;s.wann.forEach(w=>html+=`<li>${w}</li>`);html+=`</ul>`}if(s.warum)html+=`<p class="breath-section-label">Warum</p><p class="breath-body-text">${s.warum}</p>`;slide.innerHTML=html;c.appendChild(slide)});updateBreathNav()}
+function changeBreath(dir){const slides=document.querySelectorAll('.breath-slide');slides[currentBreath].classList.remove('active');slides[currentBreath].classList.add('exit');setTimeout(()=>slides[currentBreath].classList.remove('exit'),400);currentBreath=Math.max(0,Math.min(BREATH_SLIDES.length-1,currentBreath+dir));slides[currentBreath].classList.add('active');updateBreathNav()}
+function updateBreathNav(){document.getElementById('breath-prev').disabled=currentBreath===0;document.getElementById('breath-next').disabled=currentBreath===BREATH_SLIDES.length-1;document.getElementById('breath-counter').textContent=`${currentBreath+1} / ${BREATH_SLIDES.length}`}
+function buildBackup(){const c=document.getElementById('backup-steps');BACKUP_STEPS.forEach(s=>{const el=document.createElement('div');el.className='backup-step';el.innerHTML=`<div class="backup-step-num">${s.n}</div><div class="backup-step-content"><div class="backup-step-title">${s.title}</div><div class="backup-step-desc">${s.desc}</div></div>`;c.appendChild(el)})}
+renderDay();buildBreathSlides();buildBackup();
+const todayNames=['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'];
+const todayIdx=DAYS.indexOf(todayNames[new Date().getDay()]);
+if(todayIdx>=0){currentDay=todayIdx;renderDay()}
+</script>
+</body>
+</html>
